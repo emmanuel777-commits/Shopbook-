@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Shop Book</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0F7B4A">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap">
+<style>
+:root{--bg:#F6F8F4;--card:#fff;--ink:#14231B;--mute:#5E6B63;--line:#DCE3DA;--green:#0F7B4A;--greenbg:#E1F2E8;--red:#B3261E;--redbg:#FBE7E5;--amber:#8A5B00;--amberbg:#FBF0D5;color-scheme:light;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E1712;--card:#16231B;--ink:#EAF2EC;--mute:#9AAB9F;--line:#27382D;--green:#4CC58A;--greenbg:#16372A;--red:#FF8A80;--redbg:#3B1D1B;--amber:#F0C060;--amberbg:#3A2D10;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0E1712;--card:#16231B;--ink:#EAF2EC;--mute:#9AAB9F;--line:#27382D;--green:#4CC58A;--greenbg:#16372A;--red:#FF8A80;--redbg:#3B1D1B;--amber:#F0C060;--amberbg:#3A2D10;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 "Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;max-width:520px;margin:0 auto;padding:16px 16px 96px}
+h1{font-size:22px;font-weight:800;margin:4px 0 14px}
+.seg{display:flex;gap:6px;margin-bottom:12px}
+.seg button{flex:1;padding:9px 0;border:1px solid var(--line);background:var(--card);color:var(--mute);border-radius:10px;font:600 14px inherit;font-family:inherit}
+.seg button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.entry{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:16px}
+.types{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
+.types button{padding:12px 4px;border-radius:10px;border:2px solid var(--line);background:transparent;color:var(--ink);font:600 15px inherit;font-family:inherit}
+.types button.on[data-t=sale]{border-color:var(--green);background:var(--greenbg)}
+.types button.on[data-t=credit]{border-color:var(--amber);background:var(--amberbg)}
+.types button.on[data-t=expense]{border-color:var(--red);background:var(--redbg)}
+input{width:100%;padding:13px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit;margin-bottom:8px}
+input.amt{font-size:26px;font-weight:800}
+input:focus-visible,button:focus-visible{outline:3px solid var(--green);outline-offset:1px}
+.save{width:100%;padding:14px;border:0;border-radius:10px;background:var(--green);color:#fff;font:800 17px inherit;font-family:inherit}
+:root[data-theme="dark"] .save{color:#06150D}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .save{color:#06150D}}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+.stat small{color:var(--mute);display:block}
+.stat b{font-size:22px;font-weight:800}
+.profit b{color:var(--green)}.profit.neg b{color:var(--red)}
+.owed b{color:var(--amber)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border:0}
+.row .m{color:var(--mute);font-size:13px}
+.amt-s{color:var(--green);font-weight:800}.amt-c{color:var(--amber);font-weight:800}.amt-e{color:var(--red);font-weight:800}
+.list{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px 14px}
+.x{border:0;background:none;color:var(--mute);font-size:13px;text-decoration:underline;font-family:inherit}
+.pay{display:flex;gap:6px;margin-top:8px;width:100%}.pay input{margin:0}.pay button{padding:0 14px;border:0;border-radius:10px;background:var(--green);color:#fff;font:700 14px inherit;font-family:inherit}
+.empty{color:var(--mute);padding:18px 0;text-align:center}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;max-width:520px;margin:0 auto;padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;padding:14px 0;border:0;background:none;color:var(--mute);font:700 15px inherit;font-family:inherit}
+nav button.on{color:var(--green)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:80px;background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:20px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+@media(prefers-reduced-motion:reduce){.toast{transition:none}}
+.sync{font-size:13px;color:var(--mute);margin:-8px 0 12px}.sync.ok{color:var(--green)}.sync.warn{color:var(--amber)}
+.wa{display:block;width:100%;margin-top:8px;padding:11px;text-align:center;border-radius:10px;background:var(--greenbg);color:var(--green);font-weight:700;text-decoration:none}
+.login{position:fixed;inset:0;background:var(--bg);z-index:20;display:none;align-items:center;justify-content:center;padding:20px}
+.lbox{width:100%;max-width:400px}.lbox h2{font-size:28px;font-weight:800;margin:0 0 6px}.lbox p{color:var(--mute);margin:0 0 18px}
+body:not(.in) #title,body:not(.in) #sync,body:not(.in) #out,body:not(.in) #app,body:not(.in) nav{display:none!important}
+</style>
+</head>
+<body>
+<h1 id="title">Shop Book</h1>
+<div class="sync" id="sync" role="status">Saved on this phone only</div><button class="x" id="out" hidden>Sign out</button>
+<main id="app"></main>
+<nav><button data-v="home" class="on">Home</button><button data-v="debt">Who owes me</button><button data-v="hist">History</button></nav>
+<div class="toast" id="toast"></div><div class="login" id="login"><div class="lbox"><h2>Shop Book</h2><p>Sign in to back up your sales and debtors.</p><button class="save" id="lgoogle">Continue with Google</button><p style="text-align:center;margin:14px 0 10px">or use your phone number</p><div id="s1"><input id="lph" type="tel" inputmode="tel" placeholder="0803 123 4567" aria-label="Phone number"><button class="save" id="lsend">Send code</button></div><div id="s2" style="display:none"><input id="lcode" inputmode="numeric" placeholder="6-digit code" aria-label="SMS code"><button class="save" id="lverify">Verify</button></div><div class="sync warn" id="lmsg" role="status"></div><div id="rc"></div></div></div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithPhoneNumber, RecaptchaVerifier, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-firestore.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyDUtDo1jgwWVbMRbPe8_quV0F-nIrSmr9k",
+  authDomain: "shopbook-95590.firebaseapp.com",
+  projectId: "shopbook-95590",
+  storageBucket: "shopbook-95590.firebasestorage.app",
+  messagingSenderId: "680402870555",
+  appId: "1:680402870555:web:20cfb01730ae00d8d0b3be"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const fs = getFirestore(app);
+let rv = null, cr = null;
+const ref = (uid) => doc(fs, "users", uid, "book", "data");
+window.fb = {
+  onAuth: (cb) => onAuthStateChanged(auth, cb),
+  sendCode: (phone) => {
+    if (rv) { try { rv.clear(); } catch (e) {} rv = null; document.getElementById("rc").innerHTML = ""; }
+    rv = new RecaptchaVerifier(auth, "rc", { size: "invisible" });
+    return signInWithPhoneNumber(auth, phone, rv).then((c) => { cr = c; });
+  },
+  confirm: (code) => cr.confirm(code),
+  google: () => signInWithPopup(auth, new GoogleAuthProvider()),
+  signOut: () => signOut(auth),
+  load: (uid) => getDoc(ref(uid)),
+  save: (uid, data) => setDoc(ref(uid), data)
+};
+window.dispatchEvent(new Event("fbready"));
+</script>
+<script>
+(function(){
+var KEY='shopbook:v1', tx=[], dead=[], ready=false, ref=null, timer=null, view='home', period='today', type='sale';
+try{var s=localStorage.getItem(KEY);if(s)tx=JSON.parse(s)||[]}catch(e){tx=[]}
+try{dead=JSON.parse(localStorage.getItem(KEY+':dead'))||[]}catch(e){dead=[]}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(tx));localStorage.setItem(KEY+':dead',JSON.stringify(dead))}catch(e){}push()}
+function N(n){return '₦'+Math.round(n).toLocaleString('en-NG')}
+function esc(t){return String(t||'').replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.className='toast show';setTimeout(function(){t.className='toast'},1600)}
+function start(){var d=new Date();d.setHours(0,0,0,0);if(period==='week'){d.setDate(d.getDate()-((d.getDay()+6)%7))}else if(period==='month'){d.setDate(1)}return d.getTime()}
+function debtors(){var m={};tx.forEach(function(t){if(t.t==='credit'||t.t==='payment'||t.t==='contact'){var k=(t.who||'Unnamed').trim().toLowerCase();m[k]=m[k]||{name:t.who||'Unnamed',bal:0};m[k].bal+=t.t==='credit'?t.amt:t.t==='payment'?-t.amt:0;if(t.phone)m[k].phone=t.phone}});return Object.keys(m).map(function(k){return Object.assign({key:k},m[k])}).filter(function(d){return d.bal>0}).sort(function(a,b){return b.bal-a.bal})}
+function home(){
+var from=start(),sales=0,exp=0,paid=0;
+tx.forEach(function(t){if(t.ts<from)return;if(t.t==='sale'||t.t==='credit')sales+=t.amt;if(t.t==='expense')exp+=t.amt});
+var owed=debtors().reduce(function(a,d){return a+d.bal},0),p=sales-exp;
+return '<div class="seg" role="group" aria-label="Period">'+[['today','Today'],['week','This week'],['month','This month']].map(function(x){return '<button data-p="'+x[0]+'" class="'+(period===x[0]?'on':'')+'">'+x[1]+'</button>'}).join('')+'</div>'+
+'<div class="grid"><div class="stat"><small>Sales</small><b>'+N(sales)+'</b></div><div class="stat"><small>Expenses</small><b>'+N(exp)+'</b></div><div class="stat profit'+(p<0?' neg':'')+'"><small>Profit</small><b>'+N(p)+'</b></div><div class="stat owed"><small>Owed to you</small><b>'+N(owed)+'</b></div></div>'+
+'<div class="entry"><div class="types">'+[['sale','Sale'],['credit','On credit'],['expense','Expense']].map(function(x){return '<button data-t="'+x[0]+'" class="'+(type===x[0]?'on':'')+'">'+x[1]+'</button>'}).join('')+'</div>'+
+'<input class="amt" id="amt" type="number" inputmode="decimal" placeholder="Amount in ₦" aria-label="Amount">'+
+(type==='credit'?'<input id="who" placeholder="Customer name" aria-label="Customer name"><input id="phone" type="tel" inputmode="tel" placeholder="Phone number (for WhatsApp reminders)" aria-label="Customer phone number">':'')+
+'<input id="note" placeholder="'+(type==='expense'?'What for? (e.g. transport, stock)':'What was sold? (optional)')+'" aria-label="Note">'+
+'<button class="save" id="save">Save '+(type==='sale'?'sale':type==='credit'?'credit sale':'expense')+'</button></div>';
+}
+function waNum(p){var d=String(p).replace(/\D/g,'');if(d.indexOf('234')===0)return d;if(d.charAt(0)==='0')return '234'+d.slice(1);if(d.length===10)return '234'+d;return d}
+function waLink(x){var m='Hello '+x.name+', a friendly reminder that you owe '+N(x.bal)+'. Please pay when you can. Thank you.';return 'https://wa.me/'+waNum(x.phone)+'?text='+encodeURIComponent(m)}
+function debt(){
+var d=debtors();
+if(!d.length)return '<div class="empty">Nobody owes you right now.<br>Record a sale “On credit” on Home to start.</div>';
+return '<div class="list">'+d.map(function(x){return '<div class="row" style="flex-wrap:wrap"><div><b>'+esc(x.name)+'</b></div><div class="amt-c">'+N(x.bal)+'</div>'+(x.phone?'<a class="wa" href="'+esc(waLink(x))+'" target="_blank" rel="noopener">Remind on WhatsApp</a>':'<div class="pay"><input type="tel" inputmode="tel" placeholder="Their phone number" data-ph="'+esc(x.key)+'" aria-label="Phone number for '+esc(x.name)+'"><button data-savephone="'+esc(x.key)+'" data-name="'+esc(x.name)+'">Save number</button></div>')+'<div class="pay"><input type="number" inputmode="decimal" placeholder="Amount paid" data-k="'+esc(x.key)+'" aria-label="Amount paid by '+esc(x.name)+'"><button data-pay="'+esc(x.key)+'" data-name="'+esc(x.name)+'">Record payment</button></div></div>'}).join('')+'</div>';
+}
+var editId=null;
+function hist(){
+if(!tx.length)return '<div class="empty">No records yet. Add your first sale on Home.</div>';
+var L={sale:'Sale',credit:'On credit',expense:'Expense',payment:'Payment received'};
+var C={sale:'amt-s',credit:'amt-c',expense:'amt-e',payment:'amt-s'};
+var rows=tx.filter(function(t){return t.t!=='contact'}).sort(function(a,b){return b.ts-a.ts}).slice(0,100).map(function(t){
+var d=new Date(t.ts),when=d.toLocaleDateString('en-NG',{day:'numeric',month:'short'})+' '+d.toLocaleTimeString('en-NG',{hour:'2-digit',minute:'2-digit'});
+if(t.id===editId){return '<div class="row" style="flex-wrap:wrap"><div style="width:100%"><b>Edit '+L[t.t]+'</b> <span class="m">'+when+'</span></div><input type="number" inputmode="decimal" id="eamt" value="'+t.amt+'" aria-label="Amount">'+((t.t==='credit'||t.t==='payment')?'<input id="ewho" value="'+esc(t.who)+'" aria-label="Customer name">':'')+'<input id="enote" value="'+esc(t.note)+'" placeholder="Note" aria-label="Note"><div class="pay"><button data-esave="'+t.id+'">Save changes</button><button data-ecancel="1" style="background:none;color:var(--mute)">Cancel</button></div></div>'}
+return '<div class="row"><div><b>'+L[t.t]+(t.who?' \u00b7 '+esc(t.who):'')+'</b><div class="m">'+esc(t.note)+(t.note?' \u00b7 ':'')+when+(t.u?' \u00b7 edited':'')+'</div></div><div style="text-align:right"><div class="'+C[t.t]+'">'+(t.t==='expense'?'\u2212':'+')+N(t.amt)+'</div><button class="x" data-edit="'+t.id+'">Edit</button> <button class="x" data-del="'+t.id+'">Delete</button></div></div>'});
+return '<div class="list">'+rows.join('')+'</div>';
+}
+function render(){
+var h=view==='home'?home():view==='debt'?debt():hist();
+document.getElementById('title').textContent=view==='home'?'Shop Book':view==='debt'?'Who owes me':'History';
+document.getElementById('app').innerHTML=h;
+Array.prototype.forEach.call(document.querySelectorAll('nav button'),function(b){b.className=b.dataset.v===view?'on':''});
+}
+function add(t,amt,note,who,phone){tx.push({id:Date.now()+Math.random().toString(36).slice(2,6),t:t,amt:amt,note:note||'',who:who||'',phone:phone||'',ts:Date.now()});save()}
+document.addEventListener('click',function(e){
+var b=e.target.closest('button');if(!b)return;
+if(b.dataset.v){view=b.dataset.v;editId=null;render();return}
+if(b.dataset.p){period=b.dataset.p;render();return}
+if(b.dataset.t){var a=(document.getElementById('amt')||{}).value;type=b.dataset.t;render();if(a)document.getElementById('amt').value=a;return}
+if(b.id==='save'){var amt=parseFloat(document.getElementById('amt').value),who=(document.getElementById('who')||{}).value||'',note=document.getElementById('note').value;
+if(!(amt>0)){toast('Enter an amount');return}
+if(type==='credit'&&!who.trim()){toast('Enter the customer’s name');return}
+add(type,amt,note,who.trim(),((document.getElementById('phone')||{}).value||'').trim());toast(type==='expense'?'Expense saved':'Sale saved');render();return}
+if(b.dataset.pay){var inp=document.querySelector('input[data-k="'+b.dataset.pay+'"]'),v=parseFloat(inp.value);
+if(!(v>0)){toast('Enter the amount paid');return}
+add('payment',v,'',b.dataset.name);toast('Payment recorded');render();return}
+if(b.dataset.edit){editId=b.dataset.edit;render();return}
+if(b.dataset.ecancel){editId=null;render();return}
+if(b.dataset.esave){var a2=parseFloat(document.getElementById('eamt').value);if(!(a2>0)){toast('Enter an amount');return}
+var t2=tx.filter(function(x){return x.id===b.dataset.esave})[0],w2=document.getElementById('ewho');
+if(t2){if(w2&&!w2.value.trim()){toast('Enter the name');return}t2.amt=a2;t2.note=document.getElementById('enote').value;if(w2)t2.who=w2.value.trim();t2.u=Date.now();save()}
+editId=null;toast('Updated');render();return}
+if(b.dataset.savephone){var pi=document.querySelector('input[data-ph="'+b.dataset.savephone+'"]'),pv=(pi.value||'').replace(/\D/g,'');if(pv.length<10){toast('Enter a valid phone number');return}add('contact',0,'',b.dataset.name,pv);toast('Number saved');render();return}
+if(b.dataset.del){dead.push(b.dataset.del);tx=tx.filter(function(t){return t.id!==b.dataset.del});save();toast('Deleted');render()}
+});
+/* Cloud backup with phone login (Firebase) */
+var uid=null;
+function setSync(k,extra){var el=document.getElementById('sync');if(!el)return;var T={off:['Saved on this phone only. Sign in to back up.','warn'],saving:['Backing up\u2026',''],ok:['Backed up '+(extra||''),'ok'],err:['Backup failed. It will retry on your next save.','warn'],offline:['Offline. Saved on this phone, will back up when you\u2019re online.','warn']}[k];el.textContent=T[0];el.className='sync '+T[1]}
+function merge(rtx,rdead){dead=dead.concat((rdead||[]).filter(function(i){return dead.indexOf(i)<0}));var m={};tx.concat(rtx||[]).forEach(function(t){if(t&&t.id&&dead.indexOf(t.id)<0){var o=m[t.id];if(!o||(t.u||t.ts)>=(o.u||o.ts))m[t.id]=t}});tx=Object.keys(m).map(function(k){return m[k]})}
+function push(){if(!uid||!window.fb)return;if(!navigator.onLine){setSync('offline');return}if(!ready)return;clearTimeout(timer);setSync('saving');timer=setTimeout(function(){window.fb.save(uid,{tx:tx,dead:dead.slice(-500),at:Date.now()}).then(function(){setSync('ok',new Date().toLocaleTimeString('en-NG',{hour:'2-digit',minute:'2-digit'}))}).catch(function(){setSync('err')})},800)}
+function showLogin(on){document.getElementById('login').style.display=on?'flex':'none';document.body.classList.toggle('in',!on);document.getElementById('out').hidden=on}
+function lmsg(t){document.getElementById('lmsg').textContent=t||''}
+function startAuth(){
+window.fb.onAuth(function(u){
+if(!u){uid=null;ready=false;try{localStorage.removeItem(KEY+':in')}catch(e){}showLogin(true);setSync('off');return}
+uid=u.uid;try{localStorage.setItem(KEY+':in','1')}catch(e){}showLogin(false);document.getElementById('out').hidden=false;sync();
+})}
+function sync(){if(!uid||!window.fb)return;if(!navigator.onLine){setSync('offline');return}setSync('saving');
+window.fb.load(uid).then(function(snap){if(snap.exists()){var d=snap.data()||{};merge(d.tx,d.dead)}ready=true;save();render()}).catch(function(){setSync(navigator.onLine?'err':'offline')})}
+window.addEventListener('online',sync);
+window.addEventListener('offline',function(){if(uid)setSync('offline')});
+document.addEventListener('click',function(e){
+var b=e.target.closest('button');if(!b)return;
+if(b.id==='lgoogle'){lmsg('Opening Google\u2026');window.fb.google().catch(function(err){var c=err&&err.code;lmsg(c==='auth/popup-closed-by-user'||c==='auth/cancelled-popup-request'?'':c==='auth/popup-blocked'?'Please allow popups for this page and try again.':c==='auth/operation-not-allowed'?'Google sign-in is not turned on yet.':'Google sign-in failed ('+(c||'error')+'). Try again.')});return}
+if(b.id==='lsend'){var p=waNum(document.getElementById('lph').value);if(p.length<12){lmsg('Enter your phone number, e.g. 0803 123 4567');return}
+lmsg('Sending code\u2026');b.disabled=true;
+window.fb.sendCode('+'+p).then(function(){document.getElementById('s1').style.display='none';document.getElementById('s2').style.display='block';lmsg('Code sent by SMS. Enter it below.')}).catch(function(err){lmsg(err&&(err.code==='auth/operation-not-allowed'||err.code==='auth/billing-not-enabled')?'This number isn\u2019t approved yet. Ask the app owner to add it.':'Could not send code ('+((err&&err.code)||'error')+'). Check the number and try again.')}).then(function(){b.disabled=false});return}
+if(b.id==='lverify'){var c=document.getElementById('lcode').value.trim();if(c.length<6){lmsg('Enter the 6-digit code');return}
+lmsg('Checking\u2026');window.fb.confirm(c).catch(function(){lmsg('Wrong or expired code. Try again.')});return}
+if(b.id==='out'){window.fb.signOut().then(function(){tx=[];dead=[];try{localStorage.removeItem(KEY);localStorage.removeItem(KEY+':dead')}catch(e){}document.getElementById('s1').style.display='block';document.getElementById('s2').style.display='none';lmsg('');render()});return}
+});
+var wasIn=false;try{wasIn=localStorage.getItem(KEY+':in')==='1'}catch(e){}showLogin(!wasIn);
+if(window.fb)startAuth();else window.addEventListener('fbready',startAuth);
+if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})})}
+render();
+})();
+</script>
+</body>
+</html>
